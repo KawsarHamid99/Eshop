@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load cart %}
+{% load custom_filter %}
+{% block title %}Cart{% endblock title %}
+
+{% block content %}
+<div class="container">
+    <div class="border rounded p-4 m-4">
+        <p class="display-4 ps-4 ms-4">Your Cart</p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Serial</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    <th>Quantity</th>
+                    <th>Price</th>
+                    <th>Total Price</th>
+                </tr>
+            </thead>
+            <tbody>
+              {% if products  %}
+                
+                {% for product in products %}
+                <tr>
+                    <td scope="row">{{forloop.counter}}</td>
+                    <td > <img class="rounded-circle" src="{{ product.image.url }}" style="height: 80px;" alt=""></td>
+                    <td>{{product.name}}</td>
+                    <td>{{product|cart_quantity:request.session.cart}}</td>
+                    <td>{{product.price|currency}}</td>
+                    <td>{{ product|Total_price:request.session.cart|currency}}</td>
+                    
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th colspan="4" class="text-center "></th>
+                    <th colspan="" class="text-center ">Total</th>
+                    <th class="">{{products|Total_price_All:request.session.cart|currency}}</th>
+                </tr>
+            </tfoot>
+        </table>
+        <hr>
+        <!-- Button trigger modal -->
+        <div class="m-3 p-3">
+            <a href="#" class="btn btn-light btn-outline-info border rounded float-end" data-bs-toggle="modal" data-bs-target="#exampleModal">Checkout</a>
+        </div>
+        {% endif %}
+
+    </div>
+
+</div>
+  
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Checkout Form</h5>
+          <hr>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="m-2 p-2">
+            <form action="/check-out/" method="POST">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="" class="form-label">Address:</label>
+                    <input type="text" name="address" class="form-control" placeholder="">
+                    <small class="text-muted" id="helpID">enter your shipping address</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="" class="form-label">Phone:</label>
+                    <input type="text" name="phone" class="form-control" placeholder="">
+                    <small class="text-muted" id="helpID">enter your Contact Number</small>
+                </div>
+                <input type="submit" class="btn btn-primary col-sm-6 float-end" value="Checkout">
+            </form>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+{% endblock content %}
